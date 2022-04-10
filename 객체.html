@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: #000;
+      overflow: hidden;
+    }
+  </style>
+  <script>
+    'use strict';
+    let 동그라미들 = []; //console에서 변수에 접근하고 싶으면 최상위scope에 넣어줘야 함
+    window.addEventListener('load', function() {
+
+      class 동그라미 {
+        움직이고있다 = true;
+        constructor({부모, 색상, 속도}) {//비구조화 할당
+          //console.log(123);
+          //this.반지름 = Math.random() * 100;
+          // this.x = Math.random() * window.innerWidth;
+          // this.y = Math.random() * window.innerHeight;
+          //this.색상 = 색상;
+          // this.원만들기();
+          // this.색정하기(색상);
+          this.속도 = 속도;
+          this.원만들기().색정하기(색상);
+          this.지름크기적용(Math.random() * 100 * 2);
+          this.위치정하기(
+            Math.random() * window.innerWidth,
+            Math.random() * window.innerHeight
+          );
+          this.부모에붙여라(부모);
+        }
+        원만들기() {
+          let 원 = document.createElement('div');
+          원.style.position = 'absolute';
+          원.style.border = "2px solid #000";
+          원.style.backgroundColor = this.색상;
+          원.style.borderRadius = '50%';
+         // 바디.appendChild(원);
+          this.원 = 원;
+          this.방향정하기();
+
+          원.addEventListener('click', () => {
+            this.움직이고있다 = !this.움직이고있다;
+            원.style.opacity = this.움직이고있다 ? '1' : '0.5';
+           // console.log(this.움직이고있다);
+          });
+          return this;
+        }
+        색정하기(색상) {
+          this.색상 = 색상;
+          this.원.style.backgroundColor = this.색상;
+        }
+        방향정하기() {
+          let 속도 = this.속도;
+          let dx = Math.random() * 속도;
+          let dy = Math.random() * 속도;
+          if(Math.random() < 0.5) dx += -1;
+          if(Math.random() < 0.5) dy += -1;
+          this.방향 = {x: dx, y: dy};
+        }
+        지름얻기() {
+          return this.반지름 * 2;
+        }
+        지름크기적용(지름) {
+          this.반지름 = 지름 / 2;
+          let size = this.지름얻기();
+          let 원 = this.원;
+          원.style.width = 지름 + "px";
+          원.style.height = 지름 + "px";
+          this.사이즈 = 지름;
+        }
+        위치정하기(x, y) {
+          this.x = x;
+          this.y = y;
+          let 원 = this.원;
+          //console.log(`사이즈: ${this.사이즈}`);
+          원.style.left = -this.반지름 + this.x + 'px';
+          원.style.top = -this.반지름 + this.y + 'px';
+        }
+        부모에붙여라(부모) {
+          부모.appendChild(this.원);
+        }
+        움직이자() {
+          const 이동하자 = () => {
+            //console.log(this); //바인딩(bind()), apply, call, 상위scope에 this선언, 화살표함수    
+            requestAnimationFrame(이동하자);   
+            if(!this.움직이고있다) return;     
+            this.위치정하기(this.x + this.방향.x, this.y + this.방향.y);
+          }
+          이동하자();
+          return this;
+        }
+      }
+
+      let 바디 = document.querySelector('body');
+      let 버튼 = document.querySelector('button');
+
+      setInterval(function() {
+        let 동그라미객체 = new 동그라미({
+            부모: 바디, 
+            색상: 'yellow',
+            속도: Math.random() * 4 
+          }).움직이자();
+          동그라미들.push(동그라미객체);
+
+          //console.log(동그라미객체);
+          //동그라미객체.움직이자();
+          // 바디.appendChild(동그라미객체.원);
+      }, 1000);
+    })
+  </script>
+</head>
+<body>
+  <button>Make Circle</button>
+</body>
+</html>
